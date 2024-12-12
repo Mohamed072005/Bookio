@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { AuthProvider } from 'react-oidc-context';
+import { RouterProvider } from 'react-router-dom';
+import router from './router/router.tsx';
 
 const cognitoAuthConfig = {
   authority: import.meta.env.VITE_AUTHORITY,
@@ -14,8 +16,10 @@ const cognitoAuthConfig = {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <AuthProvider { ...cognitoAuthConfig }>
-      <App />
+    <AuthProvider {...cognitoAuthConfig}>
+      <RouterProvider router={router}>
+        <App />
+      </RouterProvider>
     </AuthProvider>
   </StrictMode>,
 )

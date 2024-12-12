@@ -1,18 +1,19 @@
+import { Outlet } from "react-router-dom";
 import { AuthWrapper } from "./components/AuthWrapper"
+import './App.css'
+import { useEffect } from "react";
 import { useAuthHandler } from "./hooks/useAuthHandler";
+import { setLocalStorage } from "./helpers/LocalStorage";
 
 const AuthenticatedContent: React.FC = () => {
   const { auth } = useAuthHandler();
-
+  useEffect(() => {
+    if(auth.user?.access_token){
+      setLocalStorage('token', auth.user.access_token);
+    }
+  })
   return (
-    <div>
-      <h1>Welcome to the Authenticated Area</h1>
-      <p>Hello, <strong>{auth.user?.profile.email}</strong>!</p>
-      <p>Your ID Token: {auth.user?.id_token}</p>
-      <p>Your Access Token: {auth.user?.access_token}</p>
-      <p>Your Refresh Token: {auth.user?.refresh_token}</p>
-      <button onClick={() => auth.removeUser()}>Sign Out</button>
-    </div>
+    <Outlet />
   );
 };
 
