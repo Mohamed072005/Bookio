@@ -12,6 +12,23 @@ export class DynamodbService implements OnModuleInit {
         this.docClient = getDynamoDBClient()
     }
 
+    async findBookByName(bookTitle: string) {
+        try{
+            const params = {
+                TableName: 'Books',
+                IndexName: 'title-index',
+                KeyConditionExpression: 'title = :title',
+                ExpressionAttributeValues: {
+                    ':title': bookTitle
+                }
+            }
+            const response = await this.docClient.send(new QueryCommand(params));
+            return response.Items.length > 0 || null;
+        }catch(err: any){
+            throw err
+        }
+    }
+
     async put(tableName: string, item: BookEntity) {
         try {
             const params = {
@@ -39,7 +56,7 @@ export class DynamodbService implements OnModuleInit {
 
             const response = await this.docClient.send(new GetCommand(params));
             return response.Item;
-        } catch (error) {
+        } catch (error: any) {
             this.logger.error(`Error getting book from ${tableName}:`, error);
             throw error;
         }
