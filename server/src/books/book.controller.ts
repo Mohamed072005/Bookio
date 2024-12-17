@@ -6,7 +6,6 @@ import { DynamodbService } from "src/databse/dynamodb.service";
 import { BookEntity } from "./book.entity";
 
 @Controller('books')
-@UseGuards(JWTAuthGuard)
 export class BookController {
     constructor(
         private readonly bookService: BookService,
@@ -14,6 +13,7 @@ export class BookController {
     ) {}
 
     @Post()
+    @UseGuards(JWTAuthGuard)
     @UsePipes(new ValidationPipe({ 
         transform: true,
         exceptionFactory: (errors) => {
@@ -51,24 +51,24 @@ export class BookController {
 
     
 
-    // @Get()
-    // async getBooks(): Promise<{ statusCode: Number, books: any, message: String }> {
-    //     try{
-    //         const books = await this.dynamodbService.scan(this.bookService.TABLE_NAME)
-    //         return {
-    //             statusCode: HttpStatus.ACCEPTED,
-    //             books: books,
-    //             message: 'Books fetched successfully'
-    //         }
-    //     }catch(err) {
-    //         if(err instanceof HttpException) {
-    //             throw new HttpException({ message: err.getResponse() }, err.getStatus());
-    //         }
-    //         throw new HttpException({
-    //             statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-    //             message: 'An unexpected error occurred',
-    //             error: err.message || 'Internal Server Error'
-    //         }, HttpStatus.INTERNAL_SERVER_ERROR)
-    //     }
-    // }
+    @Get()
+    async getBooks(): Promise<{ statusCode: Number, books: BookEntity[], message: String }> {
+        try{
+            const books = await this.dynamodbService.scan(this.bookService.TABLE_NAME)
+            return {
+                statusCode: HttpStatus.ACCEPTED,
+                books: books,
+                message: 'Books fetched successfully'
+            }
+        }catch(err) {
+            if(err instanceof HttpException) {
+                throw new HttpException({ message: err.getResponse() }, err.getStatus());
+            }
+            throw new HttpException({
+                statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'An unexpected error occurred',
+                error: err.message || 'Internal Server Error'
+            }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
 }

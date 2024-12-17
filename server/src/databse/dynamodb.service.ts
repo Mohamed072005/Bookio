@@ -126,7 +126,7 @@ export class DynamodbService implements OnModuleInit {
             };
 
             const response = await this.docClient.send(new ScanCommand(params));
-            return response.Items || [];
+            return response.Items as BookEntity[] || [];
         } catch (error) {
             this.logger.error(`Error scanning books from ${tableName}:`, error);
             throw error;
