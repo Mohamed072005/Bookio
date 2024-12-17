@@ -31,7 +31,7 @@ export const Footer: React.FC = () => {
                 </div>
                 <Separator className="my-8" />
                 <div className="text-center text-sm">
-                    © 2023 Bookio. All rights reserved.
+                    © 2024 Bookio. All rights reserved.
                 </div>
             </div>
         </footer>

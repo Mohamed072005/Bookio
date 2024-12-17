@@ -5,7 +5,7 @@ export const useAuthHandler = () => {
 
     const signOutRedirect = () => {
         const clientId = import.meta.env.VITE_CLIENT_ID;
-        const logoutUri = "<logout uri>";
+        const logoutUri = "http://localhost:5173/";
         const cognitoDomain = import.meta.env.VITE_COGNETO_DOMAIN;
         window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
     };

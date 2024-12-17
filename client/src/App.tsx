@@ -5,22 +5,18 @@ import { useEffect } from "react";
 import { useAuthHandler } from "./hooks/useAuthHandler";
 import { setLocalStorage } from "./helpers/LocalStorage";
 
-const AuthenticatedContent: React.FC = () => {
-  const { auth } = useAuthHandler();
-  useEffect(() => {
-    if(auth.user?.access_token){
-      setLocalStorage('token', auth.user.access_token);
-    }
-  })
-  return (
-    <Outlet />
-  );
-};
-
 const App: React.FC = () => {
+  const { auth } = useAuthHandler();
+  console.log("Hello");
+  useEffect(() => {
+    if (auth.user?.access_token) {
+      setLocalStorage('token', auth.user.access_token);
+      console.log(auth.user.access_token);
+    }
+  }, [])
   return (
     <AuthWrapper>
-      <AuthenticatedContent />
+      <Outlet />
     </AuthWrapper>
   )
 }
