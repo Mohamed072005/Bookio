@@ -2,6 +2,7 @@ import { DeleteCommand, DynamoDBDocumentClient, GetCommand, PutCommand, QueryCom
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { getDynamoDBClient } from '../config/dynamodb.config';
 import { BookEntity } from "src/books/book.entity";
+import { UpdateBookParamDTO } from "src/books/dto/update.book.param.dto";
 
 @Injectable()
 
@@ -13,7 +14,7 @@ export class DynamodbService implements OnModuleInit {
     }
 
     async findBookByName(bookTitle: string) {
-        try{
+        try {
             const params = {
                 TableName: 'Books',
                 IndexName: 'title-index',
@@ -24,7 +25,44 @@ export class DynamodbService implements OnModuleInit {
             }
             const response = await this.docClient.send(new QueryCommand(params));
             return response.Items.length > 0 || null;
-        }catch(err: any){
+        } catch (err: any) {
+            throw err
+        }
+    }
+
+    async findAlreadyExistsBookByNameForUpdate(bookTitle: string, bookId: UpdateBookParamDTO) {
+        try {
+            const params = {
+                TableName: 'Books',
+                IndexName: 'title-index',
+                KeyConditionExpression: 'title = :title',
+                FilterExpression: 'id <> :id',
+                ExpressionAttributeValues: {
+                    ':title': bookTitle,
+                    ':id': bookId.id
+                }
+            }
+            const response = await this.docClient.send(new QueryCommand(params));
+            return response.Items.length > 0 && response.Items[0].id !== bookId.id || null;
+        } catch (err: any) {
+            console.log(err);
+            
+            throw err
+        }
+    }
+
+    async findBookById(bookId: UpdateBookParamDTO) {
+        try {
+            const params = {
+                TableName: 'Books',
+                ExpressionAttributeValues: {
+                    ':id': bookId.id
+                },
+                KeyConditionExpression: 'id = :id'
+            }
+            const response = await this.docClient.send(new QueryCommand(params));
+            return response.Items.length === 1 || null;
+        } catch (err: any) {
             throw err
         }
     }
@@ -97,7 +135,7 @@ export class DynamodbService implements OnModuleInit {
             };
 
             const response = await this.docClient.send(new UpdateCommand(params));
-            return response.Attributes;
+            return response.Attributes as BookEntity;
         } catch (error) {
             this.logger.error(`Error updating item in ${tableName}:`, error);
             throw error;
