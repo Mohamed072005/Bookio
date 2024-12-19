@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards, UsePipes, ValidationPipe } from "@nestjs/common";
 import { BookService } from "./book.service";
 import { CreateBookDTO } from "./dto/create.book.dto";
 import { JWTAuthGuard } from "src/common/guards/jwt.auth.guard";
@@ -75,6 +75,7 @@ export class BookController {
     }
 
     @Put(':id')
+    @UseGuards(JWTAuthGuard)
     @UsePipes(new ValidationPipe({
         transform: true,
         exceptionFactory: (errors) => {
@@ -100,6 +101,29 @@ export class BookController {
                 statusCode: HttpStatus.ACCEPTED,
                 book: updatedBook,
                 message: 'Book updated successfully'
+            }
+        } catch (err) {
+            if (err instanceof HttpException) {
+                throw new HttpException({ message: err.getResponse() }, err.getStatus());
+            }
+            throw new HttpException({
+                statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'An unexpected error occurred',
+                error: err.message || 'Internal Server Error'
+            }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    @Delete(':id')
+    @UseGuards(JWTAuthGuard)
+    async deleteBook(
+        @Param() param: BookIdParamDTO
+    ): Promise<{ statusCode: Number, message: String }> {
+        try {
+            await this.bookService.handelDeleteBook(param);
+            return {
+                statusCode: HttpStatus.ACCEPTED,
+                message: 'Book deleted successfully'
             }
         } catch (err) {
             if (err instanceof HttpException) {

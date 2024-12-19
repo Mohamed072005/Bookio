@@ -33,4 +33,10 @@ export class BookService {
         const book = await this.dynamodbService.update(this.TABLE_NAME, {id: bookId.id}, updateBookDTO);
         return book;
     }
+
+    async handelDeleteBook (bookId: BookIdParamDTO) {
+        const findBook = await this.dynamodbService.findBookById(bookId);
+        if(!findBook) throw new HttpException('Book not found', HttpStatus.NOT_FOUND);
+        await this.dynamodbService.delete(this.TABLE_NAME, {id: bookId.id});
+    }
 }
