@@ -5,7 +5,7 @@ import { JWTAuthGuard } from "src/common/guards/jwt.auth.guard";
 import { DynamodbService } from "src/databse/dynamodb.service";
 import { BookEntity } from "./book.entity";
 import { UpdateBookDTO } from "./dto/update.book.dto";
-import { UpdateBookParamDTO } from "./dto/update.book.param.dto";
+import { BookIdParamDTO } from "./dto/book.id.param.dto";
 
 @Controller('books')
 export class BookController {
@@ -92,7 +92,7 @@ export class BookController {
     }))
     async updateBook(
         @Body() updateBookDTO: UpdateBookDTO,
-        @Param() param: UpdateBookParamDTO
+        @Param() param: BookIdParamDTO
     ): Promise<{ statusCode: Number, book: BookEntity, message: String }> {
         try {
             const updatedBook = await this.bookService.handelUpdateBook(updateBookDTO, param);

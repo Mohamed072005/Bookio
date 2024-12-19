@@ -4,7 +4,7 @@ import { CreateBookDTO } from "./dto/create.book.dto";
 import { BookEntity } from "./book.entity";
 import { v4 as uuidv4 } from 'uuid';
 import { UpdateBookDTO } from "./dto/update.book.dto";
-import { UpdateBookParamDTO } from "./dto/update.book.param.dto";
+import { BookIdParamDTO } from "./dto/book.id.param.dto";
 
 
 @Injectable()
@@ -25,7 +25,7 @@ export class BookService {
         return await this.dynamodbService.put(this.TABLE_NAME, book);
     }
 
-    async handelUpdateBook(updateBookDTO: UpdateBookDTO, bookId: UpdateBookParamDTO): Promise<BookEntity>{
+    async handelUpdateBook(updateBookDTO: UpdateBookDTO, bookId: BookIdParamDTO): Promise<BookEntity>{
         const bookExists = await this.dynamodbService.findBookById(bookId);
         if(!bookExists) throw new HttpException('Book not found', HttpStatus.NOT_FOUND);
         const uniqueBookTitle = await this.dynamodbService.findAlreadyExistsBookByNameForUpdate(updateBookDTO.title, bookId);
