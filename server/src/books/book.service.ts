@@ -3,6 +3,8 @@ import { DynamodbService } from "src/databse/dynamodb.service";
 import { CreateBookDTO } from "./dto/create.book.dto";
 import { BookEntity } from "./book.entity";
 import { v4 as uuidv4 } from 'uuid';
+import { UpdateBookDTO } from "./dto/update.book.dto";
+import { UpdateBookParamDTO } from "./dto/update.book.param.dto";
 
 
 @Injectable()
@@ -13,10 +15,7 @@ export class BookService {
 
     async handelCreateBook(createBookDTO: CreateBookDTO): Promise<BookEntity> {
         const findBook = await this.dynamodbService.findBookByName(createBookDTO.title);
-        console.log(findBook);
-        if(findBook) {
-            throw new HttpException(`Book with this title '${createBookDTO.title}' already exists`, HttpStatus.BAD_REQUEST);
-        }
+        if(findBook) throw new HttpException(`Book with this title '${createBookDTO.title}' already exists`, HttpStatus.BAD_REQUEST);
         const book: BookEntity = {
             id: uuidv4(),
             ...createBookDTO,
@@ -24,5 +23,14 @@ export class BookService {
             updatedAt: new Date().toISOString()
         }
         return await this.dynamodbService.put(this.TABLE_NAME, book);
+    }
+
+    async handelUpdateBook(updateBookDTO: UpdateBookDTO, bookId: UpdateBookParamDTO): Promise<BookEntity>{
+        const bookExists = await this.dynamodbService.findBookById(bookId);
+        if(!bookExists) throw new HttpException('Book not found', HttpStatus.NOT_FOUND);
+        const uniqueBookTitle = await this.dynamodbService.findAlreadyExistsBookByNameForUpdate(updateBookDTO.title, bookId);
+        if(uniqueBookTitle) throw new HttpException(`Book with this title '${updateBookDTO.title}' already exists`, HttpStatus.BAD_REQUEST);
+        const book = await this.dynamodbService.update(this.TABLE_NAME, {id: bookId.id}, updateBookDTO);
+        return book;
     }
 }
