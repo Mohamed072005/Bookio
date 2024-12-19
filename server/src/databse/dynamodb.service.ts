@@ -2,7 +2,7 @@ import { DeleteCommand, DynamoDBDocumentClient, GetCommand, PutCommand, QueryCom
 import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { getDynamoDBClient } from '../config/dynamodb.config';
 import { BookEntity } from "src/books/book.entity";
-import { UpdateBookParamDTO } from "src/books/dto/update.book.param.dto";
+import { BookIdParamDTO } from "src/books/dto/book.id.param.dto";
 
 @Injectable()
 
@@ -30,7 +30,7 @@ export class DynamodbService implements OnModuleInit {
         }
     }
 
-    async findAlreadyExistsBookByNameForUpdate(bookTitle: string, bookId: UpdateBookParamDTO) {
+    async findAlreadyExistsBookByNameForUpdate(bookTitle: string, bookId: BookIdParamDTO) {
         try {
             const params = {
                 TableName: 'Books',
@@ -51,7 +51,7 @@ export class DynamodbService implements OnModuleInit {
         }
     }
 
-    async findBookById(bookId: UpdateBookParamDTO) {
+    async findBookById(bookId: BookIdParamDTO) {
         try {
             const params = {
                 TableName: 'Books',
