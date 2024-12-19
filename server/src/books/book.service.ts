@@ -27,7 +27,7 @@ export class BookService {
 
     async handelUpdateBook(updateBookDTO: UpdateBookDTO, bookId: UpdateBookParamDTO): Promise<BookEntity>{
         const bookExists = await this.dynamodbService.findBookById(bookId);
-        if(!bookExists) throw new HttpException(`Book with this id '${bookId.id}' not found`, HttpStatus.NOT_FOUND);
+        if(!bookExists) throw new HttpException('Book not found', HttpStatus.NOT_FOUND);
         const uniqueBookTitle = await this.dynamodbService.findAlreadyExistsBookByNameForUpdate(updateBookDTO.title, bookId);
         if(uniqueBookTitle) throw new HttpException(`Book with this title '${updateBookDTO.title}' already exists`, HttpStatus.BAD_REQUEST);
         const book = await this.dynamodbService.update(this.TABLE_NAME, {id: bookId.id}, updateBookDTO);
