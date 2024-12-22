@@ -2,16 +2,18 @@ import { BadRequestException, Body, Controller, Delete, Get, HttpException, Http
 import { BookService } from "./book.service";
 import { CreateBookDTO } from "./dto/create.book.dto";
 import { JWTAuthGuard } from "src/common/guards/jwt.auth.guard";
-import { DynamodbService } from "src/databse/dynamodb.service";
+import { BookDynamodbService } from "src/databse/book.dynamodb.service";
 import { BookEntity } from "./book.entity";
 import { UpdateBookDTO } from "./dto/update.book.dto";
 import { BookIdParamDTO } from "./dto/book.id.param.dto";
+import { BorrowBookDTO } from "./dto/borrow.book.dto";
+import { ReservationEntity } from "src/reservations/reservation.entity";
 
 @Controller('books')
 export class BookController {
     constructor(
         private readonly bookService: BookService,
-        private readonly dynamodbService: DynamodbService
+        private readonly dynamodbService: BookDynamodbService
     ) { }
 
     @Post()
@@ -126,6 +128,46 @@ export class BookController {
                 message: 'Book deleted successfully'
             }
         } catch (err) {
+            if (err instanceof HttpException) {
+                throw new HttpException({ message: err.getResponse() }, err.getStatus());
+            }
+            throw new HttpException({
+                statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'An unexpected error occurred',
+                error: err.message || 'Internal Server Error'
+            }, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    @Post(':id/borrow')
+    @UseGuards(JWTAuthGuard)
+    @UsePipes(new ValidationPipe({
+        transform: true,
+        exceptionFactory: (errors) => {
+            const formattedErrors = errors.map(error => ({
+                field: error.property,
+                constraints: Object.values(error.constraints || {})
+            }));
+
+            throw new BadRequestException({
+                statusCode: HttpStatus.BAD_REQUEST,
+                message: 'Validation failed',
+                errors: formattedErrors
+            });
+        }
+    }))
+    async borrowBook(
+        @Body() borrowBookDTO: BorrowBookDTO,
+        @Param() param: BookIdParamDTO
+    ): Promise<{ statusCode: Number, reservation: ReservationEntity, message: String }> {
+        try{
+            const reservation = await this.bookService.handelBorrowBook(borrowBookDTO, param);
+            return {
+                statusCode: HttpStatus.CREATED,
+                reservation: reservation,
+                message: 'Book borrowed successfully'
+            }
+        }catch(err: any){
             if (err instanceof HttpException) {
                 throw new HttpException({ message: err.getResponse() }, err.getStatus());
             }

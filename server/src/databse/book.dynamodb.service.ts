@@ -3,12 +3,13 @@ import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { getDynamoDBClient } from '../config/dynamodb.config';
 import { BookEntity } from "src/books/book.entity";
 import { BookIdParamDTO } from "src/books/dto/book.id.param.dto";
+import { CreateBookDTO } from "src/books/dto/create.book.dto";
 
 @Injectable()
 
-export class DynamodbService implements OnModuleInit {
+export class BookDynamodbService implements OnModuleInit {
     private docClient: DynamoDBDocumentClient;
-    private readonly logger = new Logger(DynamodbService.name);
+    private readonly logger = new Logger(BookDynamodbService.name);
     onModuleInit() {
         this.docClient = getDynamoDBClient()
     }
@@ -58,10 +59,11 @@ export class DynamodbService implements OnModuleInit {
                 ExpressionAttributeValues: {
                     ':id': bookId.id
                 },
-                KeyConditionExpression: 'id = :id'
+                KeyConditionExpression: 'id = :id',
+                Limit: 1
             }
             const response = await this.docClient.send(new QueryCommand(params));
-            return response.Items.length === 1 || null;
+            return response.Items?.[0] as BookEntity || null;
         } catch (err: any) {
             throw err
         }
