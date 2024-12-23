@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 
 const Header: React.FC = () => {
     const { auth } = useAuthHandler();
+    console.log(auth.user?.access_token);
     const handelLogout = async () => {
         try {
             removeLocalStorage('token');
@@ -69,7 +70,6 @@ const Header: React.FC = () => {
                         }
                     </nav>
                 </div>
-                <p>{ auth.user?.access_token }</p>
             </header >
         </>
     );
