@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 .env
+src/components/CreateBookScreen/ArticleEditor.tsx
+src/pages/CreateArticle.tsx
 
 # Editor directories and files
 .vscode/*
