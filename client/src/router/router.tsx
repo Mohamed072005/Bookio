@@ -1,4 +1,7 @@
+import AdminLayout from "@/layout/AdminLayout";
 import Layout from "@/layout/Layout";
+import BooksPage from "@/pages/AdminPages/BooksPage";
+import DashboardPage from "@/pages/AdminPages/DashboardPage";
 import CreateArticle from "@/pages/CreateArticle";
 import HomePage from "@/pages/HomePage";
 import ProfilePage from "@/pages/ProfilePage";
@@ -20,9 +23,23 @@ const router = createBrowserRouter([
             {
                 path: '/article',
                 element: <CreateArticle />
+            },
+        ],
+    }, 
+    {
+        path: '/dashboard',
+        element: <AdminLayout />,
+        children: [
+            {
+                path:  '/dashboard',
+                element: <DashboardPage />
+            },
+            {
+                path: '/dashboard/books',
+                element: <BooksPage />
             }
         ]
-    }
+    },
 ])
 
 export default router;
