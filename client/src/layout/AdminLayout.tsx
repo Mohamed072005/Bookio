@@ -1,8 +1,6 @@
 import AdminHeader from "@/components/AdminScreens/AdminHeader";
 import AdminSidebar from "@/components/AdminScreens/AdminSidebar";
-import { useAuthHandler } from "@/hooks/useAuthHandler";
-import { useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 const AdminLayout: React.FC = () => {
     // const { auth } = useAuthHandler();

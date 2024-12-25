@@ -2,7 +2,6 @@ import AdminLayout from "@/layout/AdminLayout";
 import Layout from "@/layout/Layout";
 import BooksPage from "@/pages/AdminPages/BooksPage";
 import DashboardPage from "@/pages/AdminPages/DashboardPage";
-import CreateArticle from "@/pages/CreateArticle";
 import HomePage from "@/pages/HomePage";
 import ProfilePage from "@/pages/ProfilePage";
 import { createBrowserRouter } from "react-router-dom";
@@ -19,10 +18,6 @@ const router = createBrowserRouter([
             {
                 path: '/profile',
                 element: <ProfilePage />
-            },
-            {
-                path: '/article',
-                element: <CreateArticle />
             },
         ],
     }, 
