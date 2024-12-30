@@ -12,29 +12,29 @@ const router = createBrowserRouter([
         element: <Layout />,
         children: [
             {
-                path: '/',
-                element: <HomePage />
+                path: '', // Nested paths inherit the parent path
+                element: <HomePage />,
             },
             {
-                path: '/profile',
-                element: <ProfilePage />
+                path: 'profile',
+                element: <ProfilePage />,
             },
         ],
-    }, 
+    },
     {
         path: '/dashboard',
         element: <AdminLayout />,
         children: [
             {
-                path:  '/dashboard',
-                element: <DashboardPage />
+                path: '', // Match /dashboard
+                element: <DashboardPage />,
             },
             {
-                path: '/dashboard/books',
-                element: <BooksPage />
-            }
-        ]
+                path: 'books', // Match /dashboard/books
+                element: <BooksPage />,
+            },
+        ],
     },
-])
+]);
 
 export default router;
