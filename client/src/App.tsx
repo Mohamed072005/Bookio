@@ -1,9 +1,10 @@
-import { Outlet } from "react-router-dom";
+import { RouterProvider } from "react-router-dom";
 import { AuthWrapper } from "./components/AuthWrapper"
 import './App.css'
 import { useEffect } from "react";
 import { useAuthHandler } from "./hooks/useAuthHandler";
 import { setLocalStorage } from "./helpers/LocalStorage";
+import router from "./router/router";
 
 const App: React.FC = () => {
   const { auth } = useAuthHandler();
@@ -16,7 +17,7 @@ const App: React.FC = () => {
   }, [])
   return (
     <AuthWrapper>
-      <Outlet />
+      <RouterProvider router={router} />
     </AuthWrapper>
   )
 }

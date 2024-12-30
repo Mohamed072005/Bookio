@@ -17,7 +17,6 @@ export class BookController {
     ) { }
 
     @Post()
-    @UseGuards(JWTAuthGuard)
     @UsePipes(new ValidationPipe({
         transform: true,
         exceptionFactory: (errors) => {
